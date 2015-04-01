@@ -1,9 +1,211 @@
-grammar de.jpaw.bonaparte.api.dsl.ApiDsl with org.eclipse.xtext.common.Terminals
+grammar de.jpaw.bonaparte.api.dsl.ApiDsl with de.jpaw.bonaparte.dsl.BonScript
 
 generate apiDsl "http://www.jpaw.de/bonaparte/api/dsl/ApiDsl"
+ /*
+  * Copyright 2015 Michael Bischoff
+  *
+  * Licensed under the Apache License, Version 2.0 (the "License");
+  * you may not use this file except in compliance with the License.
+  * You may obtain a copy of the License at
+  *
+  *   http://www.apache.org/licenses/LICENSE-2.0
+  *
+  * Unless required by applicable law or agreed to in writing, software
+  * distributed under the License is distributed on an "AS IS" BASIS,
+  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  * See the License for the specific language governing permissions and
+  * limitations under the License.
+  */
+  
+import "http://www.jpaw.de/bonaparte/dsl/BonScript" as pojos
+import "http://www.eclipse.org/xtext/common/JavaVMTypes" as jvmTypes    // to allow checking of referenced imports
 
+
+/** Grammar for a SWAGGER 2.0 spec, later to be extended for RAML etc. */
 Model:
-	greetings+=Greeting*;
+    imports        += ImportDefinition*
+    (
+    mimeTypeDefs   += MimeTypeDefinition
+    licenseDefs    += LicenseDefinition
+    httpHeaderDefs += HttpHeaderParameterDefinition
+    )*
+	apiObjects     += ApiObject;
 	
-Greeting:
-	'Hello' name=ID '!';
+
+Hostname returns STRING:
+    {STRING} (ID | INT) ('.' (ID | INT))*
+;
+HostnameWithOptionalPort:
+    host = Hostname (':' port = INT)?
+;
+
+RelativePathname:
+    ID ('/' ID)*
+;
+AbsolutePathname:
+    '/' RelativePathname
+;
+PathnameComponentWithTemplating:
+    ID | ('{' ID '}')    
+;
+RelativePathnameWithTemplating:
+    PathnameComponentWithTemplating ('/' PathnameComponentWithTemplating)*
+;
+AbsolutePathnameWithTemplating:
+    '/' RelativePathnameWithTemplating
+;
+Url:
+    protocol = Protocol '://' host = HostnameWithOptionalPort path = AbsolutePathname
+;
+
+HttpHeaderParameterDefinition:
+    'HttpHeader' name = ID '=' STRING // ';'
+;
+
+enum SecurityLocation:
+    header | query
+;
+enum FlowType:
+    implicit | password | application | accessCode
+;
+SecurityScopeDefinition:
+    scope = STRING ':' description = STRING
+;
+SecurityDefinition:
+    'Security' name = ID type = Securityscheme '{'
+         ('description'  description     = STRING)?
+         (
+             // apiKey
+            (
+                securityLocation = SecurityLocation
+                variableName = ID
+            )
+            // oauth
+            | (
+                flow = FlowType
+                ('authUrl'  authorizationUrl = Url)?
+                ('tokenUrl' tokenUrl = Url)?
+                '[' scopeDefs += SecurityScopeDefinition (',' scopeDefs += SecurityScopeDefinition)* ']'
+            ) 
+         )?
+    '}'
+;
+
+MimeTypeDefinition:
+    'MIME' ('type')? name = ID '=' mimeType = STRING // ';'
+;
+enum PredefinedMimeType:
+    JSON | XML | BON
+;
+MimeType:
+    mimeTypeRef = [MimeTypeDefinition | ID] | stdMimeType = PredefinedMimeType | explicitMimeType = STRING
+;
+
+enum Protocol:
+    http | https | ws | wss
+;
+// separate rule to achieve null for unspecified protocol
+OptProtocol:
+    protocol = Protocol
+;
+
+enum HttpMethod:
+    GET | PUT | POST | DELETE | OPTIONS | HEAD | PATCH // | CONNECT | TRACE 
+;
+OptHttpMethod:
+    httpMethod = HttpMethod
+;
+
+
+ContactObject:
+    {ContactObject}
+    '{'
+        ('name'     name    = STRING)?
+        ('url'      url     = Url)?
+        ('email'    email   = STRING)?
+    '}'
+;
+
+LicenseDefinition:
+    'License' name = ID '=' shortName = STRING ('@' url = Url)?  // ';'
+;
+enum PredefinedLicense:  // list taken from http://opensource.org/licenses
+    GPL | LGPL2 | LGPL3 | ASL2 | EPL1 | MPL | BSD2 | BSD3 | MIT | CDDL
+;
+
+LicenseObject:
+    licenseRef = [LicenseDefinition | ID] | stdLicense = PredefinedLicense | (explicitLicenseName = STRING ('@' explicitLicenseUrl = Url)?)
+;
+
+InfoObject:
+    'title'             title           = STRING              // required
+    ('description'      description     = STRING)?
+    ('TOS'              termsOfService  = STRING)?
+    ('contact'          contact         = ContactObject)?
+    ('license'          license         = LicenseObject)?
+    ('version'          version         = STRING)           // required
+;
+
+ResponseItem:
+    (isDefault ?= 'default') | (httpStatusCode = INT)
+    ':'
+    response = [pojos::ClassDefinition | QualifiedId]
+;
+
+enum Securityscheme:
+    basic | oauth2 | apiKey 
+;
+enum ParamLocation:
+    header | query | path | body | form
+;
+ParamItem:
+    ((isOptional ?= 'optional') | (isRequired ?= 'required'))?
+    where = ParamLocation
+    name = ID
+    ('description'  description     = STRING)?
+;
+
+SecurityItem:
+    securityRef = [SecurityDefinition | ID]
+    ('[' scopeNames += STRING (',' scopeNames += STRING)* ']')?
+;
+    
+
+OperationObject:
+    (isDeprecated ?= '@Deprecated')?
+    name = ID                          // not required in Swagger (operationId), but required here
+    '{'
+        ('tags'         (tags           += STRING)*)?
+        ('summary'      summary         = STRING)?
+        ('description'  description     = STRING)
+        ('schemes'      (schemes        += Protocol)*)?
+        // external docs
+        // operationId (moved forward...)
+        ('consumes' (consumes  += MimeType)*           )       // unclear about the spec wording "an empty value may be used to clear the global definition"
+        ('produces' (produces  += MimeType)*           )
+        ('params'   (params    += ParamItem)*)?
+        ('responses'(responses += ResponseItem)+)               // required
+        ('schemes'  (schemes   += Protocol)*           )?      // Q: ordering differs from ApiObject ordering...
+        ('security' (security  += SecurityItem)*       )?
+    '}'
+;
+
+PathsObject:
+    AbsolutePathnameWithTemplating '{'
+        (method = HttpMethod operation = OperationObject )
+    '}'
+;
+
+// Swagger root document
+ApiObject:
+    'API' name = ID '{'
+        info = InfoObject       // required in swagger!
+        ('host'     host      = HostnameWithOptionalPort)?
+        ('basePath' basePath  = AbsolutePathname        )?
+        ('schemes'  (schemes  += Protocol)*             )?
+        ('consumes' (consumes += MimeType)*             )
+        ('produces' (produces += MimeType)*             )
+        ('paths'    (paths    += PathsObject)*          )
+    '}'
+;
+
