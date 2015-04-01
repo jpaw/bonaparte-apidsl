@@ -5,6 +5,8 @@ import de.jpaw.bonaparte.api.dsl.apiDsl.PathsObject
 import de.jpaw.bonaparte.api.dsl.apiDsl.SecurityDefinition
 import org.eclipse.xtext.validation.Check
 import de.jpaw.bonaparte.api.dsl.apiDsl.ResponseItem
+import de.jpaw.bonaparte.api.dsl.apiDsl.ParamItem
+import de.jpaw.bonaparte.api.dsl.apiDsl.ParamLocation
 
 /**
  * This class contains custom validation rules. 
@@ -38,6 +40,11 @@ class ApiDslValidator extends AbstractApiDslValidator {
         }
     }
     
+    @Check
+    def checkParamItem(ParamItem pi) {
+        if (pi.where == ParamLocation.PATH && !pi.isIsRequired)
+            error("for path location, the parameter must be required", ApiDslPackage.Literals.PARAM_ITEM__IS_OPTIONAL)
+    }   
     @Check
     def checkPathsObject(PathsObject po) {
 //        po.operations

@@ -15,6 +15,10 @@ import de.jpaw.bonaparte.api.dsl.apiDsl.HostnameWithOptionalPort
 import de.jpaw.bonaparte.api.dsl.apiDsl.InfoObject
 import de.jpaw.bonaparte.api.dsl.apiDsl.ContactObject
 import de.jpaw.bonaparte.api.dsl.apiDsl.MimeType
+import de.jpaw.bonaparte.api.dsl.apiDsl.PathsObject
+import de.jpaw.bonaparte.api.dsl.apiDsl.OperationObject
+import de.jpaw.bonaparte.api.dsl.apiDsl.ParamItem
+import de.jpaw.bonaparte.api.dsl.apiDsl.ResponseItem
 
 /**
  * Generates code from your model files on save.
@@ -85,7 +89,11 @@ class ApiDslSwaggerMain implements IGenerator {
     }
     
     def private print(ContactObject it) {
-        #[ name.optString("name"), url?.asString.optString("url"), email.optString("email")].jsonObject
+        #[
+            name            .optString("name"),
+            url?.asString   .optString("url"),
+            email           .optString("email")
+        ].jsonObject
     }
     
     def private print(InfoObject it) {
@@ -99,6 +107,50 @@ class ApiDslSwaggerMain implements IGenerator {
         ].jsonObject
     }
     
+    def private code(ResponseItem it) {
+        if (isIsDefault) "default" else if (httpStatusCode > 0) Integer.toString(httpStatusCode) else httpEnumCode.code.getName.substring(1) 
+    }
+    def private print(ResponseItem it) {
+        '''"«code»": "TODO:«response.name»"'''
+    }
+    def private print(OperationObject it) {
+        return '''
+            "«name.getName»": «#[
+                tags                    .optArraySE ("tags"),
+                summary                 .optString  ("summary"),
+                description             .optString  ("description"),
+                    // ext docs
+                operationId             .optObj     ("operationId"),
+                consumes?.map[asString] .optArraySE ("consumes"),
+                produces?.map[asString] .optArraySE ("produces"),
+                if (params.size > 0) '''"parameters": [ «params.map[print].join(",\n")» ]''',
+                '''"responses": {
+                    «responses.map[print].join(",\n")»
+                }''',
+                schemes ?.map[getName]  .optArraySE ("schemes"),
+                isIsDeprecated.asString .optString  ("deprecated")
+                // security
+            ].jsonObject»'''
+    }
+    def static private asString(boolean b) {
+        return if (b) "true" else "false"
+    }
+    def private print(ParamItem it) {
+        return #[
+            name                    .optString("name"),
+            where.getName           .optString("in"),
+            description             .optString("description"),
+            isIsRequired.asString   .optString("required")
+        ].jsonObject
+    }
+    
+    def private print(PathsObject it) {
+        return '''
+           "«path»": {
+               «operations.map[print].join(",\n")»
+               «if (params.size > 0) ''', "parameters": [ «params.map[print].join(",\n")» ]'''»
+           }'''
+    }
     def private writeSwagger(ApiObject it) {
         return #[
             "2.0"                   .optString  ("swagger"),
@@ -107,7 +159,11 @@ class ApiDslSwaggerMain implements IGenerator {
             // basePath?.optString("basePath"),
             schemes ?.map[getName]  .optArraySE ("schemes"),
             consumes?.map[asString] .optArraySE ("consumes"),
-            produces?.map[asString] .optArraySE ("produces")
+            produces?.map[asString] .optArraySE ("produces"),
+            '''
+               "paths": {
+                   «paths.map[print].join(",\n")»
+               }'''
         ].jsonObject
     }
 }

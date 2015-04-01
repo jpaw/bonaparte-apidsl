@@ -220,6 +220,7 @@ OperationObject:
 PathsObject:
     path = AbsolutePathnameWithTemplating '{'
         (operations += OperationObject)+
+        ('params'    '{' (params    += ParamItem)*     '}')?
     '}'
 ;
 
