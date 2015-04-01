@@ -4,6 +4,7 @@ import de.jpaw.bonaparte.api.dsl.apiDsl.ApiDslPackage
 import de.jpaw.bonaparte.api.dsl.apiDsl.PathsObject
 import de.jpaw.bonaparte.api.dsl.apiDsl.SecurityDefinition
 import org.eclipse.xtext.validation.Check
+import de.jpaw.bonaparte.api.dsl.apiDsl.ResponseItem
 
 /**
  * This class contains custom validation rules. 
@@ -28,6 +29,15 @@ class ApiDslValidator extends AbstractApiDslValidator {
         }
     }
 
+    @Check
+    def checkResponseItem(ResponseItem ri) {
+        if (!ri.isIsDefault && ri.httpEnumCode === null) {
+            // numeric code provided: it must be in range 100..999
+            if (ri.httpStatusCode < 100 || ri.httpStatusCode > 999)
+                error("Status code must be in range [100,999]", ApiDslPackage.Literals.RESPONSE_ITEM__HTTP_STATUS_CODE)
+        }
+    }
+    
     @Check
     def checkPathsObject(PathsObject po) {
 //        po.operations

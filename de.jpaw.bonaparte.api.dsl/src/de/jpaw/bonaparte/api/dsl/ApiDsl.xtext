@@ -49,7 +49,7 @@ HostnameWithOptionalPort hidden():
 RelativePathname hidden():
     ID ('/' ID)*
 ;
-AbsolutePathname hidden(): {STRING}
+AbsolutePathname hidden():
     '/' RelativePathname
 ;
 PathnameComponentWithTemplating hidden():
@@ -162,8 +162,18 @@ InfoObject:
 //    '}'
 ;
 
+// selected status codes can be provided by enum constants
+enum HttpStatusCode:
+    C200="OK" | C201="Created" | C202="Accepted" | C204="NoContent" |
+    C302="Found" | C304="NotModified" |
+    C400="BadRequest" | C401="Unauthorized" | C403="Forbidden" | C404="NotFound" |
+    C500="InternalServerError" | C501="NotImplemented" | C503="ServiceUnavailable" | C504="GatewayTimeout"
+;
+OptHttpStatusCode:
+    code = HttpStatusCode
+;
 ResponseItem:
-    ((isDefault ?= 'default') | (httpStatusCode = INT))
+    (isDefault ?= 'default' | httpStatusCode = INT | httpEnumCode = OptHttpStatusCode)
     ':'
     response = [pojos::ClassDefinition | QualifiedId]
 ;

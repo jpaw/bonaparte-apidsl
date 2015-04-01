@@ -3,9 +3,11 @@
  */
 package de.jpaw.bonaparte.api.dsl.generator
 
+import de.jpaw.bonaparte.api.dsl.generator.swagger.ApiDslSwaggerMain
+import javax.inject.Inject
 import org.eclipse.emf.ecore.resource.Resource
-import org.eclipse.xtext.generator.IGenerator
 import org.eclipse.xtext.generator.IFileSystemAccess
+import org.eclipse.xtext.generator.IGenerator
 
 /**
  * Generates code from your model files on save.
@@ -13,12 +15,10 @@ import org.eclipse.xtext.generator.IFileSystemAccess
  * See https://www.eclipse.org/Xtext/documentation/303_runtime_concepts.html#code-generation
  */
 class ApiDslGenerator implements IGenerator {
+	@Inject
+	private ApiDslSwaggerMain swaggerGenerator
 	
 	override void doGenerate(Resource resource, IFileSystemAccess fsa) {
-//		fsa.generateFile('greetings.txt', 'People to greet: ' + 
-//			resource.allContents
-//				.filter(typeof(Greeting))
-//				.map[name]
-//				.join(', '))
+	    swaggerGenerator.doGenerate(resource, fsa)
 	}
 }
