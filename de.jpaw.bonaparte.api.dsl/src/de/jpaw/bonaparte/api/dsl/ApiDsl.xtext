@@ -32,31 +32,45 @@ Model:
 	apiObjects     += ApiObject;
 	
 
-Hostname returns STRING:
-    {STRING} (ID | INT) ('.' (ID | INT))*
+//
+//
+// First, define some rules which allow to code hostnames, pathnames and URLs without quotes.
+// To prevent spaces, the hidden() directive unhides whitespace, single line comments and multi line comments.
+//
+//
+
+Hostname hidden():
+    (ID | INT) ('.' (ID | INT))*
 ;
-HostnameWithOptionalPort:
+HostnameWithOptionalPort hidden():
     host = Hostname (':' port = INT)?
 ;
 
-RelativePathname:
+RelativePathname hidden():
     ID ('/' ID)*
 ;
-AbsolutePathname:
+AbsolutePathname hidden(): {STRING}
     '/' RelativePathname
 ;
-PathnameComponentWithTemplating:
+PathnameComponentWithTemplating hidden():
     ID | ('{' ID '}')    
 ;
-RelativePathnameWithTemplating:
+RelativePathnameWithTemplating hidden():
     PathnameComponentWithTemplating ('/' PathnameComponentWithTemplating)*
 ;
-AbsolutePathnameWithTemplating:
+AbsolutePathnameWithTemplating hidden():
     '/' RelativePathnameWithTemplating
 ;
-Url:
+Url hidden():
     protocol = Protocol '://' host = HostnameWithOptionalPort path = AbsolutePathname
 ;
+
+//
+//
+// Part 2 of the grammar defines regular rules.
+//
+//
+
 
 HttpHeaderParameterDefinition:
     'HttpHeader' name = ID '=' STRING // ';'
@@ -95,7 +109,7 @@ MimeTypeDefinition:
     'MIME' ('type')? name = ID '=' mimeType = STRING // ';'
 ;
 enum PredefinedMimeType:
-    JSON | XML | BON
+    JSON | XML | BON | PNG | JPG
 ;
 MimeType:
     mimeTypeRef = [MimeTypeDefinition | ID] | stdMimeType = PredefinedMimeType | explicitMimeType = STRING
@@ -120,9 +134,9 @@ OptHttpMethod:
 ContactObject:
     {ContactObject}
     '{'
-        ('name'     name    = STRING)?
-        ('url'      url     = Url)?
-        ('email'    email   = STRING)?
+        (name           = STRING)?
+        (url            = Url)?
+        ('email' email  = STRING)?
     '}'
 ;
 
@@ -138,16 +152,18 @@ LicenseObject:
 ;
 
 InfoObject:
-    'title'             title           = STRING              // required
-    ('description'      description     = STRING)?
-    ('TOS'              termsOfService  = STRING)?
-    ('contact'          contact         = ContactObject)?
-    ('license'          license         = LicenseObject)?
-    ('version'          version         = STRING)           // required
+//    '{'
+        'title'             title           = STRING              // required
+        ('description'      description     = STRING)?
+        ('TOS'              termsOfService  = STRING)?
+        ('contact'          contact         = ContactObject)?
+        ('license'          license         = LicenseObject)?
+        ('version'          version         = STRING)           // required
+//    '}'
 ;
 
 ResponseItem:
-    (isDefault ?= 'default') | (httpStatusCode = INT)
+    ((isDefault ?= 'default') | (httpStatusCode = INT))
     ':'
     response = [pojos::ClassDefinition | QualifiedId]
 ;
@@ -159,10 +175,10 @@ enum ParamLocation:
     header | query | path | body | form
 ;
 ParamItem:
-    ((isOptional ?= 'optional') | (isRequired ?= 'required'))?
-    where = ParamLocation
-    name = ID
-    ('description'  description     = STRING)?
+    ((isOptional ?= 'optional') | (isRequired ?= 'required'))
+    where           = ParamLocation
+    name            = ID
+    (description    = STRING)?
 ;
 
 SecurityItem:
@@ -173,7 +189,8 @@ SecurityItem:
 
 OperationObject:
     (isDeprecated ?= '@Deprecated')?
-    name = ID                          // not required in Swagger (operationId), but required here
+    name = HttpMethod
+    (operationId = ID         )?                 // Swagger operationId: not required in Swagger (operationId), but required here
     '{'
         ('tags'         (tags           += STRING)*)?
         ('summary'      summary         = STRING)?
@@ -181,31 +198,31 @@ OperationObject:
         ('schemes'      (schemes        += Protocol)*)?
         // external docs
         // operationId (moved forward...)
-        ('consumes' (consumes  += MimeType)*           )       // unclear about the spec wording "an empty value may be used to clear the global definition"
-        ('produces' (produces  += MimeType)*           )
-        ('params'   (params    += ParamItem)*)?
-        ('responses'(responses += ResponseItem)+)               // required
-        ('schemes'  (schemes   += Protocol)*           )?      // Q: ordering differs from ApiObject ordering...
-        ('security' (security  += SecurityItem)*       )?
+        ('consumes'      (consumes  += MimeType)*         )?       // unclear about the spec wording "an empty value may be used to clear the global definition"
+        ('produces'      (produces  += MimeType)*         )?
+        ('params'    '{' (params    += ParamItem)*     '}')?
+        ('responses' '{' (responses += ResponseItem)+  '}')       // required
+        ('schemes'       (schemes   += Protocol)*         )?      // Q: ordering differs from ApiObject ordering...
+        ('security'  '{' (security  += SecurityItem)*  '}')?
     '}'
 ;
 
 PathsObject:
-    AbsolutePathnameWithTemplating '{'
-        (method = HttpMethod operation = OperationObject )
+    path = AbsolutePathnameWithTemplating '{'
+        (operations += OperationObject)+
     '}'
 ;
 
 // Swagger root document
 ApiObject:
     'API' name = ID '{'
-        info = InfoObject       // required in swagger!
+        (/*'info'*/ info      = InfoObject              )     // required in swagger!
         ('host'     host      = HostnameWithOptionalPort)?
         ('basePath' basePath  = AbsolutePathname        )?
         ('schemes'  (schemes  += Protocol)*             )?
-        ('consumes' (consumes += MimeType)*             )
-        ('produces' (produces += MimeType)*             )
-        ('paths'    (paths    += PathsObject)*          )
+        ('consumes' (consumes += MimeType)*             )?
+        ('produces' (produces += MimeType)*             )?
+        ('paths'    (paths    += PathsObject)+          )
     '}'
 ;
 
