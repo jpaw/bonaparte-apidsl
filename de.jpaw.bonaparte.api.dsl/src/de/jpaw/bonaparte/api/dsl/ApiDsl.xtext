@@ -144,7 +144,7 @@ LicenseDefinition:
     'License' name = ID '=' shortName = STRING ('@' url = Url)?  // ';'
 ;
 enum PredefinedLicense:  // list taken from http://opensource.org/licenses
-    GPL | LGPL2 | LGPL3 | ASL2 | EPL1 | MPL | BSD2 | BSD3 | MIT | CDDL
+    GPL2 | GPL3 | LGPL21 | LGPL3 | ASL2 | EPL | MPL1 | MPL11 | MPL2 | BSD2 | BSD3 | MIT | CDDL
 ;
 
 LicenseObject:
