@@ -1,12 +1,37 @@
+*~
+*.bkp
+*.bak
+*.o
+*.a
+# core   This killed some files in a subdirectory "core" (part of java package name), so leave them in!
+# a.out  duplicate with TeX *.out
+
+# java Package Files #
 *.class
-
-# Mobile Tools for Java (J2ME)
-.mtj.tmp/
-
-# Package Files #
 *.jar
 *.war
 *.ear
 
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
+
+# TeX files
+*.aux
+*.log
+*.out
+
+# maven target directories
+target/
+plugin.xml_gen
+
+
+# generated files within XText / XTend projects
+bin/
+test-output/
+generated/
+
+# generated files within XText / XTend projects that are used a eclipse source folders
+*/src-gen/*
+!*/src-gen/.gitignore
+*/xtend-gen/*
+!*/xtend-gen/.gitignore
