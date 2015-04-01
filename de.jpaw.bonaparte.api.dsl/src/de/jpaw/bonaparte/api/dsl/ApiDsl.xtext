@@ -1,0 +1,9 @@
+grammar de.jpaw.bonaparte.api.dsl.ApiDsl with org.eclipse.xtext.common.Terminals
+
+generate apiDsl "http://www.jpaw.de/bonaparte/api/dsl/ApiDsl"
+
+Model:
+	greetings+=Greeting*;
+	
+Greeting:
+	'Hello' name=ID '!';
