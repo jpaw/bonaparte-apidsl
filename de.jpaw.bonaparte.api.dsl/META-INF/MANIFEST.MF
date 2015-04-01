@@ -7,6 +7,25 @@ Bundle-SymbolicName: de.jpaw.bonaparte.api.dsl; singleton:=true
 Bundle-ActivationPolicy: lazy
 Require-Bundle: org.eclipse.xtext;visibility:=reexport,
  de.jpaw.bonaparte.dsl;bundle-version="[3.5.0,4.0.0)",
- org.eclipse.equinox.common;bundle-version="3.5.0"
+ org.eclipse.equinox.common;bundle-version="3.5.0",
+ org.eclipse.xtext.util,
+ org.eclipse.emf.ecore,
+ org.eclipse.emf.common,
+ org.eclipse.xtext.xbase.lib,
+ org.antlr.runtime,
+ org.eclipse.xtext.common.types,
+ org.objectweb.asm;bundle-version="[5.0.1,6.0.0)";resolution:=optional
 Import-Package: org.apache.log4j
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Export-Package: de.jpaw.bonaparte.api.dsl,
+ de.jpaw.bonaparte.api.dsl.services,
+ de.jpaw.bonaparte.api.dsl.apiDsl,
+ de.jpaw.bonaparte.api.dsl.apiDsl.impl,
+ de.jpaw.bonaparte.api.dsl.apiDsl.util,
+ de.jpaw.bonaparte.api.dsl.serializer,
+ de.jpaw.bonaparte.api.dsl.parser.antlr,
+ de.jpaw.bonaparte.api.dsl.parser.antlr.internal,
+ de.jpaw.bonaparte.api.dsl.validation,
+ de.jpaw.bonaparte.api.dsl.scoping,
+ de.jpaw.bonaparte.api.dsl.generator,
+ de.jpaw.bonaparte.api.dsl.formatting
