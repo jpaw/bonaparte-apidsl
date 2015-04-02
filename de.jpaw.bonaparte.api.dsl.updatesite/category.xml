@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site>
+   <feature url="features/de.jpaw.bonaparte.api.dsl.sdk_0.0.0.jar" id="de.jpaw.bonaparte.api.dsl.sdk" version="0.0.0">
+      <category name="Bonaparte API"/>
+   </feature>
+   <category-def name="Bonaparte API" label="Software development tools related to API documentation">
+      <description>
+         DSLs to generate Swagger, RAML etc.
+      </description>
+   </category-def>
+</site>
