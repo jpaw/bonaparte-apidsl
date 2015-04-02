@@ -19,6 +19,7 @@ import de.jpaw.bonaparte.api.dsl.apiDsl.PathsObject
 import de.jpaw.bonaparte.api.dsl.apiDsl.OperationObject
 import de.jpaw.bonaparte.api.dsl.apiDsl.ParamItem
 import de.jpaw.bonaparte.api.dsl.apiDsl.ResponseItem
+import static extension de.jpaw.bonaparte.api.dsl.generator.JsonEscaper.*
 
 /**
  * Generates code from your model files on save.
@@ -61,13 +62,14 @@ class ApiDslSwaggerMain implements IGenerator {
         return mimeTypeRef?.mimeType ?: stdMimeType?.getName ?: explicitMimeType
     }
     def static optString(String contents, String name) {
-        if (contents !== null)
-            return '''"«name»": "«contents»"'''
+        return contents.quoteEscape.optObj(name)
     }
+    // print the contents unquoted
     def static optObj(String contents, String name) {
         if (contents !== null)
-            return '''"«name»":«contents»'''
+            return '''"«name»": «contents»'''
     }
+    // print array, unless the whole array object is null
     def static optArray(List<String> contents, String name) {
         if (contents !== null)
             return '''"«name»": [«contents.map['''"«it»"'''].join(", ")»]'''
@@ -75,7 +77,7 @@ class ApiDslSwaggerMain implements IGenerator {
     // print array if not null and not empty
     def static optArraySE(List<String> contents, String name) {
         if (contents !== null && contents.size > 0)
-            return '''"«name»": [«contents.map['''"«it»"'''].join(", ")»]'''
+            return contents.optArray(name)
     }
     
     def private print(LicenseObject it) {
