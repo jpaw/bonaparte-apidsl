@@ -16,23 +16,37 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xs
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <tycho-version>0.22.0</tycho-version>
-        <bonaparte.version>3.5.1</bonaparte.version>
-        <xtext.version>2.8.1</xtext.version>
+        <tycho.version>0.23.1</tycho.version>
+        <fornax.version>3.5.1</fornax.version>
+        <xtend.version>2.8.4</xtend.version>
+
+        <!-- org.apache.maven.plugins -->
+        <compiler.plugin.version>3.3</compiler.plugin.version>
+        <clean.plugin.version>2.6.1</clean.plugin.version>
+        <enforcer.plugin.version>1.4.1</enforcer.plugin.version>
+        <javadoc.plugin.version>2.10.3</javadoc.plugin.version>
+
+        <!-- org.codehaus.mojo maven plugins -->
+        <exec.plugin.version>1.4.0</exec.plugin.version>
+        <build-helper.plugin.version>1.9.1</build-helper.plugin.version>
+        
+        <bonaparte.version>3.6.1-SNAPSHOT</bonaparte.version>
     </properties>
 
     <repositories>
+    <!-- not required any more with xtext 2.8.3 / Eclipse Mars -->
         <repository>
-            <id>eclipse</id>
+            <id>p2-xtext</id>
             <layout>p2</layout>
-            <url>http://download.eclipse.org/releases/luna</url>
+            <url>http://download.eclipse.org/modeling/tmf/xtext/updates/releases/2.8.4/</url>
         </repository>
         <repository>
-            <id>Xtext Update Site</id>
+            <id>p2-mars</id>
             <layout>p2</layout>
-            <url>http://download.eclipse.org/modeling/tmf/xtext/updates/releases/</url>
+            <url>http://download.eclipse.org/releases/mars/201506241002/</url>
         </repository>
     </repositories>
+
     <build>
         <pluginManagement>
             <plugins>
@@ -43,7 +57,7 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xs
                 <plugin>
                     <groupId>org.eclipse.xtend</groupId>
                     <artifactId>xtend-maven-plugin</artifactId>
-                    <version>${xtext.version}</version>
+                    <version>${xtend.version}</version>
                     <executions>
                         <execution>
                             <goals>
@@ -61,7 +75,7 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xs
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-clean-plugin</artifactId>
-                    <version>2.5</version>
+                    <version>${clean.plugin.version}</version>
                     <executions>
                         <execution>
                             <id>gen-clean</id>
@@ -85,7 +99,7 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xs
             <plugin>
                 <groupId>org.eclipse.tycho</groupId>
                 <artifactId>tycho-maven-plugin</artifactId>
-                <version>${tycho-version}</version>
+                <version>${tycho.version}</version>
                 <extensions>true</extensions>
             </plugin>
         </plugins>
