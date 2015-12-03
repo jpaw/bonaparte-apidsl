@@ -109,7 +109,7 @@ MimeTypeDefinition:
     'MIME' ('type')? name = ID '=' mimeType = STRING // ';'
 ;
 enum PredefinedMimeType:
-    JSON | XML | BON | PNG | JPG
+    JSON | XML | BON | GIF | PNG | JPG | MP3 | MP4 | PDF | XLS
 ;
 MimeType:
     mimeTypeRef = [MimeTypeDefinition | ID] | stdMimeType = PredefinedMimeType | explicitMimeType = STRING
@@ -179,7 +179,7 @@ ResponseItem:
 ;
 
 enum Securityscheme:
-    basic | oauth2 | apiKey 
+    basic | oauth2 | apiKey | JWT
 ;
 enum ParamLocation:
     header | query | path | body | form
