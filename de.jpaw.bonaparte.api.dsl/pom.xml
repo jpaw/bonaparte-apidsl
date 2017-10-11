@@ -47,7 +47,7 @@
                 <artifactId>tycho-maven-plugin</artifactId>
                 <extensions>true</extensions>
             </plugin>
-            
+
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
@@ -63,12 +63,12 @@
                 <configuration>
                     <includeProjectDependencies>false</includeProjectDependencies>
                     <includePluginDependencies>true</includePluginDependencies>
-<!--                     
+<!--
                     <executableDependency>
                         <groupId>de.jpaw.bonaparte-dsl</groupId>
                         <artifactId>de.jpaw.bonaparte.dsl</artifactId>
                     </executableDependency>
- -->                    
+ -->
                     <mainClass>org.eclipse.emf.mwe2.launch.runtime.Mwe2Launcher</mainClass>
                     <arguments>
                         <argument>file://${project.basedir}/src/de/jpaw/bonaparte/api/dsl/GenerateApiDsl.mwe2</argument>
@@ -110,7 +110,7 @@
         </plugins>
         <pluginManagement>
             <plugins>
-                <!--This plugin's configuration is used to store Eclipse m2e settings 
+                <!--This plugin's configuration is used to store Eclipse m2e settings
                     only. It has no influence on the Maven build itself. -->
                 <plugin>
                     <groupId>org.eclipse.m2e</groupId>

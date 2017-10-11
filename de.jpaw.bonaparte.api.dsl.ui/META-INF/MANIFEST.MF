@@ -16,12 +16,13 @@ Require-Bundle: de.jpaw.bonaparte.api.dsl;visibility:=reexport,
  org.eclipse.xtext.common.types.ui,
  org.eclipse.xtext.ui.codetemplates.ui,
  org.eclipse.compare,
- de.jpaw.bonaparte.dsl;bundle-version="[3.5.0,4.0.0)",
- de.jpaw.bonaparte.dsl.ui;bundle-version="[3.5.0,4.0.0)"
+ de.jpaw.bonaparte.dsl;bundle-version="[4.4.0,5.0.0)",
+ de.jpaw.bonaparte.dsl.ui;bundle-version="[4.4.0,5.0.0)"
 Import-Package: org.apache.log4j
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Export-Package: de.jpaw.bonaparte.api.dsl.ui.quickfix,
  de.jpaw.bonaparte.api.dsl.ui.contentassist,
  de.jpaw.bonaparte.api.dsl.ui.internal,
- de.jpaw.bonaparte.api.dsl.ui.contentassist.antlr
+ de.jpaw.bonaparte.api.dsl.ui.contentassist.antlr,
+ de.jpaw.bonaparte.api.dsl.ui.contentassist.antlr.internal
 Bundle-Activator: de.jpaw.bonaparte.api.dsl.ui.internal.ApiDslActivator

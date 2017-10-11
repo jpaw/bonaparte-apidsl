@@ -6,7 +6,7 @@ Bundle-Version: 1.0.0.qualifier
 Bundle-SymbolicName: de.jpaw.bonaparte.api.dsl; singleton:=true
 Bundle-ActivationPolicy: lazy
 Require-Bundle: org.eclipse.xtext;visibility:=reexport,
- de.jpaw.bonaparte.dsl;bundle-version="[3.5.0,4.0.0)",
+ de.jpaw.bonaparte.dsl;bundle-version="[4.4.0,5.0.0)",
  org.eclipse.equinox.common;bundle-version="3.5.0",
  org.eclipse.xtext.util,
  org.eclipse.emf.ecore,
