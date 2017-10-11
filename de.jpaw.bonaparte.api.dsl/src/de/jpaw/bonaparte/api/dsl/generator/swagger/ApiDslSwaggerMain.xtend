@@ -23,32 +23,32 @@ import static extension de.jpaw.bonaparte.api.dsl.generator.JsonEscaper.*
 
 /**
  * Generates code from your model files on save.
- * 
+ *
  * See https://www.eclipse.org/Xtext/documentation/303_runtime_concepts.html#code-generation
  */
 class ApiDslSwaggerMain implements IGenerator {
-    
+
     public static final String GENERATED_SWAGGER_SUBFOLDER = "resources/swagger/";    // cannot start with a slash, must end with a slash
 
-    
+
     /** Creates the filename to store a generated xsd file in. */
     def private static computeSwaggerFilename(ApiObject api) {
         return GENERATED_SWAGGER_SUBFOLDER + api.name + ".json"
     }
-    
+
     override void doGenerate(Resource resource, IFileSystemAccess fsa) {
         for (api : resource.allContents.toIterable.filter(typeof(ApiObject))) {
             fsa.generateFile(api.computeSwaggerFilename, api.writeSwagger)
          }
     }
-    
+
     def static jsonObject(List<String> fields) {
         return '''
             {
                 «fields.filterNull.join(",\n")»
             }'''
     }
-    
+
     def static asString(HostnameWithOptionalPort it) {
         if (port > 0)
             return '''«host»:«port»'''
@@ -79,7 +79,7 @@ class ApiDslSwaggerMain implements IGenerator {
         if (contents !== null && contents.size > 0)
             return contents.optArray(name)
     }
-    
+
     def private print(LicenseObject it) {
         if (licenseRef !== null) {
             return #[ licenseRef.shortName.optString("name"), ApiDslConstants.stdLicenseUrls.get(licenseRef.name).optString("url") ].jsonObject
@@ -89,7 +89,7 @@ class ApiDslSwaggerMain implements IGenerator {
             return #[ explicitLicenseName.optString("name"), explicitLicenseUrl.asString.optString("url") ].jsonObject
         }
     }
-    
+
     def private print(ContactObject it) {
         #[
             name            .optString("name"),
@@ -97,7 +97,7 @@ class ApiDslSwaggerMain implements IGenerator {
             email           .optString("email")
         ].jsonObject
     }
-    
+
     def private print(InfoObject it) {
         return if (it !== null) #[
             title           .optString  ("title"),
@@ -108,9 +108,9 @@ class ApiDslSwaggerMain implements IGenerator {
             version        ?.optString  ("version")
         ].jsonObject
     }
-    
+
     def private code(ResponseItem it) {
-        if (isIsDefault) "default" else if (httpStatusCode > 0) Integer.toString(httpStatusCode) else httpEnumCode.code.getName.substring(1) 
+        if (isIsDefault) "default" else if (httpStatusCode > 0) Integer.toString(httpStatusCode) else httpEnumCode.code.getName.substring(1)
     }
     def private print(ResponseItem it) {
         '''"«code»": "TODO:«response.name»"'''
@@ -145,7 +145,7 @@ class ApiDslSwaggerMain implements IGenerator {
             isIsRequired.asString   .optString("required")
         ].jsonObject
     }
-    
+
     def private print(PathsObject it) {
         return '''
            "«path»": {

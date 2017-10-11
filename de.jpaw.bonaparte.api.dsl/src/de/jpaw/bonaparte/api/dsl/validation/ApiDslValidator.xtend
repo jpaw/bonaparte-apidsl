@@ -9,7 +9,7 @@ import de.jpaw.bonaparte.api.dsl.apiDsl.ParamItem
 import de.jpaw.bonaparte.api.dsl.apiDsl.ParamLocation
 
 /**
- * This class contains custom validation rules. 
+ * This class contains custom validation rules.
  *
  * See https://www.eclipse.org/Xtext/documentation/303_runtime_concepts.html#validation
  */
@@ -39,14 +39,14 @@ class ApiDslValidator extends AbstractApiDslValidator {
                 error("Status code must be in range [100,999]", ApiDslPackage.Literals.RESPONSE_ITEM__HTTP_STATUS_CODE)
         }
     }
-    
+
     @Check
     def checkParamItem(ParamItem pi) {
         if (pi.where == ParamLocation.PATH && !pi.isIsRequired)
             error("for path location, the parameter must be required", ApiDslPackage.Literals.PARAM_ITEM__IS_OPTIONAL)
-    }   
+    }
     @Check
     def checkPathsObject(PathsObject po) {
 //        po.operations
-    } 	
+    }
 }

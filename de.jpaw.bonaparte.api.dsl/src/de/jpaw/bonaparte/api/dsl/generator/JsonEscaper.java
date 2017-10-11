@@ -43,7 +43,7 @@ public class JsonEscaper {
         b.append('\"');
         return b.toString();
     }
-    
+
     public static String quoteAlsoNull(String s) {
         return s == null ? "null" : quoteEscape(s);
     }

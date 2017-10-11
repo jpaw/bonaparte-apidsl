@@ -11,14 +11,14 @@ import org.eclipse.xtext.generator.IGenerator
 
 /**
  * Generates code from your model files on save.
- * 
+ *
  * See https://www.eclipse.org/Xtext/documentation/303_runtime_concepts.html#code-generation
  */
 class ApiDslGenerator implements IGenerator {
-	@Inject
-	private ApiDslSwaggerMain swaggerGenerator
-	
-	override void doGenerate(Resource resource, IFileSystemAccess fsa) {
-	    swaggerGenerator.doGenerate(resource, fsa)
-	}
+    @Inject
+    private ApiDslSwaggerMain swaggerGenerator
+
+    override void doGenerate(Resource resource, IFileSystemAccess fsa) {
+        swaggerGenerator.doGenerate(resource, fsa)
+    }
 }

@@ -25,7 +25,7 @@ public class ApiDslConverter extends CommentConverter {
     public IValueConverter<String> pathname() {
         return pathnameConverter;
     }
-    
+
     // a value converter for pathnames
     @ValueConverter(rule = "RelativePathnameWithTemplating")
     public IValueConverter<String> templatingPathname() {

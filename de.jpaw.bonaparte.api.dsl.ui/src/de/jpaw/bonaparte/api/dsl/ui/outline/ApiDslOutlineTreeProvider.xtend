@@ -9,5 +9,5 @@ package de.jpaw.bonaparte.api.dsl.ui.outline
  * See https://www.eclipse.org/Xtext/documentation/304_ide_concepts.html#outline
  */
 class ApiDslOutlineTreeProvider extends org.eclipse.xtext.ui.editor.outline.impl.DefaultOutlineTreeProvider {
-	
+
 }
