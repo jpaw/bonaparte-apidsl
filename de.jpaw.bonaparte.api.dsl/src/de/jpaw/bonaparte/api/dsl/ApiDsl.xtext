@@ -46,8 +46,11 @@ HostnameWithOptionalPort hidden():
     host = Hostname (':' port = INT)?
 ;
 
+PathPart:
+    ID (('.' | '-') ID)*
+;
 RelativePathname hidden():
-    ID ('/' ID)*
+    PathPart ('/' PathPart)*
 ;
 AbsolutePathname hidden():
     '/' RelativePathname

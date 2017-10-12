@@ -83,10 +83,10 @@ class ApiDslSwaggerMain implements IGenerator {
     def private print(LicenseObject it) {
         if (licenseRef !== null) {
             return #[ licenseRef.shortName.optString("name"), ApiDslConstants.stdLicenseUrls.get(licenseRef.name).optString("url") ].jsonObject
-        } else if (stdLicense !== null) {
-            return #[ ApiDslConstants.stdLicenses.get(stdLicense).optString("name"), ApiDslConstants.stdLicenseUrls.get(stdLicense).optString("url") ].jsonObject
+        } else if (explicitLicenseName !== null) {
+            return #[ explicitLicenseName.optString("name"), explicitLicenseUrl?.asString.optString("url") ].jsonObject
         } else {
-            return #[ explicitLicenseName.optString("name"), explicitLicenseUrl.asString.optString("url") ].jsonObject
+            return #[ ApiDslConstants.stdLicenses.get(stdLicense).optString("name"), ApiDslConstants.stdLicenseUrls.get(stdLicense).optString("url") ].jsonObject
         }
     }
 
